@@ -1,1 +1,2 @@
-# Bugtracking Syste
+# bugtrackingsystem
+Bug Tracking System 
