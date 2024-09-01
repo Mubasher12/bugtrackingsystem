@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 22px;
+            color: #444;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .projects-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .projects-list li {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #fafafa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .projects-list li:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .projects-list li strong {
+            font-size: 18px;
+            color: #333;
+        }
+        .projects-list li p {
+            margin: 10px 0;
+            color: #555;
+        }
+        .projects-list li .edit-button,
+        .projects-list li .delete-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+            margin-right: 10px;
+        }
+        .projects-list li .edit-button {
+            background-color: #ffeb3b; /* Yellow shade */
+            color: #000;
+        }
+        .projects-list li .edit-button:hover {
+            background-color: #fdd835; /* Darker yellow */
+            color: #000;
+        }
+        .projects-list li .delete-button {
+            background-color: #f44336; /* Red shade */
+            color: #fff;
+        }
+        .projects-list li .delete-button:hover {
+            background-color: #e53935; /* Darker red */
+        }
+        .create-project-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #007bff;
+            border-radius: 4px;
+            padding: 10px 20px;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .create-project-link:hover {
+            background-color: #007bff;
+            color: #ffffff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manager Dashboard</h1>
+
+        <!-- Display a success message if present -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <h2>All Projects</h2>
+
+        <!-- Check if there are any projects -->
+        {% if projects %}
+            <ul class="projects-list">
+                {% for project in projects %}
+                    <li>
+                        <strong>{{ project.title }}</strong>
+                        <p>{{ project.description }}</p>
+                        <a href="{% url 'edit_project' project.id %}" class="edit-button">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_project' project.id %}" class="delete-button">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No projects available.</p>
+        {% endif %}
+
+        <!-- Link to create a new project -->
+        <a href="{% url 'create_project' %}" class="create-project-link">
+            <i class="fas fa-plus"></i> Create New Project
+        </a>
+    </div>
+</body>
+</html>

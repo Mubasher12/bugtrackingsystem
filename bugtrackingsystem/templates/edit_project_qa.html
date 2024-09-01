@@ -1,0 +1,311 @@
+<!-- <h1>Edit Project</h1>
+
+<p><strong>Project Name:</strong> {{ project.name }}</p>
+<p><strong>Project Description:</strong> {{ project.description }}</p>
+
+<h2>Assigned Developers</h2>
+<ul>
+  {% for developer in assigned_developers %}
+    <li>{{ developer.name }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Add Developer</h3>
+<form method="post" action="{% url 'add_developer' project.id %}">
+  {% csrf_token %}
+  <select name="developer_id">
+    {% for developer in all_developers %}
+      <option value="{{ developer.id }}">{{ developer.name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Add Developer</button>
+</form> -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project (QA)</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #007BFF;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul li form {
+            margin: 0;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        select, button {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        select {
+            width: 100%;
+            background-color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button, select {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Project: {{ project.title }}</h1>
+
+        <h2>Project Details</h2>
+        <p><strong>Description:</strong> {{ project.description }}</p>
+        <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+        <p><strong>End Date:</strong> {{ project.end_date }}</p>
+
+        <h2>Assigned Developers</h2>
+        <ul>
+            {% for developer in project.developers.all %}
+                <li>{{ developer.name }} 
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="developer_id" value="{{ developer.id }}">
+                        <button type="submit" name="remove_developer">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Add Developer</h2>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label for="developer">Select Developer:</label>
+            <select name="developer" id="developer">
+                {% for developer in available_developers %}
+                    <option value="{{ developer.id }}">{{ developer.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="add_developer">Add Developer</button>
+        </form>
+
+        <a class="back-link" href="{% url 'qa_dashboard' %}">Back to Dashboard</a>
+    </div>
+</body>
+</html>
+ -->
+
+<!-- edit_project_qa.html agr km na chla to idr sa upr tk uncomment kr dnga -->
+
+<!-- edit_project_qa.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 36px;
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #4a90e2;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #357ABD;
+        }
+        .developer-list {
+            margin-top: 20px;
+        }
+        .developer-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .remove-btn {
+            background-color: #e94e77;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .remove-btn:hover {
+            background-color: #d43f5e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Project: {{ project.title }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <p><strong>Title:</strong> {{ project.title }}</p>
+            <p><strong>Description:</strong> {{ project.description }}</p>
+            <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+            <p><strong>End Date:</strong> {{ project.end_date }}</p>
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn">Save</button>
+        </form>
+        <div class="developer-list">
+            <h2>Assigned Developers</h2>
+            {% for developer in project.developers.all %}
+                <div class="developer-item">
+                    <p>{{ developer.username }}</p>
+                    <form method="post" action="{% url 'remove_developer' project.id developer.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="remove-btn">Remove</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
