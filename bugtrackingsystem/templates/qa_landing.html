@@ -87,7 +87,7 @@
             {% for project in projects %}
                 <li>
                     <a href="{% url 'project_detail' project.id %}">{{ project.name }}</a>
-                    <a href="{% url 'edit_project_qa' project.id %}" class="edit-button">Edit</a> <!-- #mubasher added edit project -->
+                    <a href="{% url 'qa_edit_project' project.id %}" class="edit-button">Edit</a> <!-- #mubasher added edit project -->
                 </li>
             {% empty %}
                 <li class="empty-message">No projects assigned.</li>

@@ -39,6 +39,10 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+class Assignment(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
 class Task(models.Model):
     title = models.CharField(max_length=255, default='Default Title')
     description = models.TextField()
