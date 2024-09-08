@@ -22,15 +22,17 @@ def qa_edit_project(request, project_id):
     available_developers = all_developers.exclude(id__in=assigned_developers.values_list('user_id', flat=True))
     
     if request.method == 'POST':
-        # Handle adding or removing developers
+        # Handle removing developers
         if 'remove_developer' in request.POST:
             developer_id = request.POST.get('remove_developer')
             Assignment.objects.filter(project=project, user_id=developer_id).delete()
         
-        if 'add_developer' in request.POST:
-            developer_id = request.POST.get('add_developer')
-            developer = get_object_or_404(User, id=developer_id)
-            Assignment.objects.create(project=project, user=developer)
+        # Handle adding developers
+        if 'add_developers' in request.POST:
+            developer_ids = request.POST.getlist('add_developers')  # Get list of selected developers
+            for developer_id in developer_ids:
+                developer = get_object_or_404(User, id=developer_id)
+                Assignment.objects.get_or_create(project=project, user=developer)
         
         return redirect('qa_edit_project', project_id=project.id)
     
@@ -41,6 +43,7 @@ def qa_edit_project(request, project_id):
     }
     
     return render(request, 'qa_edit_project.html', context)
+
 
 
 def signup_view(request):

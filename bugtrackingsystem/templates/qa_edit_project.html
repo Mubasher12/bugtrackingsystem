@@ -212,6 +212,8 @@
     <title>Edit Project</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Select2 CSS for enhanced dropdowns -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <style>
         body {
@@ -289,8 +291,8 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="add_developer">Select Developer</label>
-                        <select id="add_developer" name="add_developer" class="form-control">
+                        <label for="add_developers">Select Developer</label>
+                        <select id="add_developers" name="add_developers" class="form-control" multiple>
                             {% for developer in available_developers %}
                             <option value="{{ developer.id }}">{{ developer.username }}</option>
                             {% endfor %}
@@ -306,5 +308,18 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Select2 JS for enhanced dropdowns -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <script>
+        // Initialize Select2 for the multi-select dropdown
+        $(document).ready(function() {
+            $('#add_developers').select2({
+                placeholder: "Select developers",
+                allowClear: true,
+                width: '100%'  // Make the dropdown width match the parent container
+            });
+        });
+    </script>
 </body>
 </html>

@@ -2,15 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Project, UserProfile 
 
-# class EditProjectQAForm(forms.ModelForm):
-#     class Meta:
-#         model = Project
-#         fields = ['name', 'description', 'start_date', 'end_date', 'developers'] 
 
-#         developers = forms.ModelMultipleChoiceField(
-#         queryset=User.objects.filter(role='Developer'),
-#         widget=forms.CheckboxSelectMultiple
-#     )
 class SignupForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     role = forms.ChoiceField(choices=UserProfile.USER_ROLES, widget=forms.RadioSelect)
