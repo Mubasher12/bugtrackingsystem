@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, Project, Assignment
 from .forms import SignupForm, ProjectForm
+from django.http import HttpResponseForbidden
+
 # from .forms import EditProjectQAForm 
 from django.forms import modelformset_factory
   # Create this form for handling developer assignments
@@ -44,7 +46,45 @@ def qa_edit_project(request, project_id):
     
     return render(request, 'qa_edit_project.html', context)
 
+# @login_required
+# def qa_edit_project(request, project_id):
+#     # Ensure the logged-in user is a QA
+#     if not request.user.userprofile.is_qa():
+#         return HttpResponseForbidden("You do not have permission to access this page.")
+    
+#     project = get_object_or_404(Project, id=project_id)
+    
+#     # Get all developers and check for assigned/unassigned ones
+#     developers = User.objects.filter(userprofile__role='Developer')
+#     assigned_developers_ids = Assignment.objects.filter(project=project).values_list('user_id', flat=True)
+#     assigned_developers = developers.filter(id__in=assigned_developers_ids)
+#     available_developers = developers.exclude(id__in=assigned_developers_ids)
 
+#     if request.method == 'POST':
+#         # Handle removing developers
+#         if 'remove_developer' in request.POST:
+#             developer_id = request.POST.get('remove_developer')
+#             if Assignment.objects.filter(project=project, user_id=developer_id).exists():
+#                 Assignment.objects.filter(project=project, user_id=developer_id).delete()
+        
+#         # Handle adding developers
+#         if 'add_developers' in request.POST:
+#             developer_ids = request.POST.getlist('add_developers')  # Get list of selected developers
+#             developers_to_add = User.objects.filter(id__in=developer_ids)
+#             assignments = [Assignment(project=project, user=developer) for developer in developers_to_add]
+#             Assignment.objects.bulk_create(assignments, ignore_conflicts=True)  # Prevent duplicates
+
+#         # Provide success message and redirect
+#         messages.success(request, 'Developers updated successfully!')
+#         return redirect(reverse('qa_edit_project', args=[project.id]))
+
+#     context = {
+#         'project': project,
+#         'assigned_developers': assigned_developers,
+#         'available_developers': available_developers,
+#     }
+
+#     return render(request, 'qa_edit_project.html', context)
 
 def signup_view(request):
     if request.method == 'POST':
@@ -96,6 +136,11 @@ def home(request):
 
 @login_required
 def manager_dashboard(request):
+    # Check if the logged-in user is a Manager
+    if not request.user.userprofile.is_manager():
+        return HttpResponseForbidden("You do not have permission to access this page.")
+    
+    # Allow Managers to view all projects
     projects = Project.objects.all()
     return render(request, 'manager_dashboard.html', {'projects': projects})
 
@@ -136,26 +181,45 @@ def edit_project(request, pk):
     else:
         return redirect('unauthorized')  # Redirect if a non-manager tries to access the edit page
 
-@login_required
+# @login_required
+# def qa_dashboard(request):
+#     user_profile = get_object_or_404(UserProfile, user=request.user)
+#     projects = Project.objects.filter(assigned_to=user_profile)
+#     return render(request, 'qa_landing.html', {'projects': projects})
+
 @login_required
 def qa_dashboard(request):
+    # Check if the logged-in user is a QA
+    if not request.user.userprofile.is_qa():
+        return HttpResponseForbidden("You do not have permission to access this page.")
+    
+    # Fetch projects assigned to the logged-in user (as QA)
+    # projects = Project.objects.filter(UserProfile=request.user)  # Assuming Project is related to User
     user_profile = get_object_or_404(UserProfile, user=request.user)
     projects = Project.objects.filter(assigned_to=user_profile)
     return render(request, 'qa_landing.html', {'projects': projects})
 
 
 
-@login_required
+# @login_required
+# def developer_landing(request):
+#     user_profile = get_object_or_404(UserProfile, user=request.user)
+#     projects = Project.objects.filter(assigned_to=user_profile)
+#     return render(request, 'developer_landing.html', {'projects': projects})
+
 @login_required
 def developer_landing(request):
+    # Check if the logged-in user is a Developer
+    if not request.user.userprofile.is_developer():
+        return HttpResponseForbidden("You do not have permission to access this page.")
     user_profile = get_object_or_404(UserProfile, user=request.user)
     projects = Project.objects.filter(assigned_to=user_profile)
+    # Fetch projects assigned to the logged-in user (as Developer)
+    # projects = Project.objects.filter(assigned_to=request.user)  # Assuming Project is related to User
     return render(request, 'developer_landing.html', {'projects': projects})
 
 
 
-
-@login_required
 @login_required
 def assigned_projects(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)

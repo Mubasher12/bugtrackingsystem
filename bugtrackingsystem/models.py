@@ -17,9 +17,12 @@ class UserProfile(models.Model):
         return self.user.username
     def is_qa(self):
         return self.role == 'QA'
-
+    
     def is_manager(self):
         return self.role == 'Manager'
+    def is_developer(self):
+        return self.role=="Developer"
+    
      
 
 class Project(models.Model):
