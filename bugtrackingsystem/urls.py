@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from . import views
 from .views import qa_edit_project
-
+ 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/signup/', permanent=True)),
@@ -18,6 +18,8 @@ urlpatterns = [
     path('project/<int:pk>/delete/', views.delete_project, name='delete_project'),
     path('assigned-projects/', views.assigned_projects, name='assigned_projects'),
     path('projects/<int:pk>/', views.project_detail, name='project_detail'),
+    path('landing-page/', views.landing_page, name='landing_page'),
+
  
     path('projects/<int:project_id>/edit/', views.qa_edit_project, name='qa_edit_project'),
 
