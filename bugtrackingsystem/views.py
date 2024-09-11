@@ -249,3 +249,37 @@ def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
     return render(request, 'project_detail.html', {'project': project})
 
+def landing_page(request):
+    user = request.user
+
+    if user.is_manager:
+        # Managers see all projects
+        projects = Project.objects.all()
+        context = {
+            'projects': projects,
+            'can_add_edit_delete': True,
+        }
+    elif user.is_qa:
+        # QA users see only assigned projects
+        projects = Project.objects.filter(assigned_to=user)
+        context = {
+            'projects': projects,
+            'can_edit': True,
+        }
+    elif user.is_developer:
+        # Developers see only assigned projects
+        projects = Project.objects.filter(assigned_to=user)
+        context = {
+            'projects': projects,
+            'can_edit': False,
+        }
+    else:
+        # Default case
+        projects = []
+        context = {
+            'projects': projects,
+            'can_add_edit_delete': False,
+            'can_edit': False,
+        }
+
+    return render(request, 'landing_page.html', context)
