@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assigned Bugs</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 28px;
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Assigned Bugs</h1>
+        <ul>
+            {% for bug in bugs %}
+                <li>
+                    <strong>{{ bug.title }}</strong><br>
+                    {{ bug.description }}<br>
+                    <strong>Deadline:</strong> {{ bug.deadline|date:"F d, Y" }} <!-- Displaying deadline -->
+                </li>
+            {% empty %}
+                <li>No bugs assigned to you.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
