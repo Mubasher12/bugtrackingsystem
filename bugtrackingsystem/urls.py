@@ -19,6 +19,12 @@ urlpatterns = [
     path('assigned-projects/', views.assigned_projects, name='assigned_projects'),
     path('projects/<int:pk>/', views.project_detail, name='project_detail'),
     path('landing-page/', views.landing_page, name='landing_page'),
+    # path('create_bug/', views.create_bug, name='create_bug'),
+    path('create_bug/', views.create_bug, name='create_bug'),
+    path('bugs/', views.bug_list, name='bug_list'),
+    path('developer/assigned-bugs/', views.developer_assigned_bugs, name='developer_assigned_bugs'),
+
+
 
  
     path('projects/<int:project_id>/edit/', views.qa_edit_project, name='qa_edit_project'),

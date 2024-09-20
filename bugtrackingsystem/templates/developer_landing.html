@@ -68,6 +68,8 @@
 <body>
     <div class="container">
         <h1>Welcome, Developer!</h1>
+        <a href="{% url 'developer_assigned_bugs' %}" class="btn btn-primary">View My Bugs</a>
+
         <h2>Your Assigned Projects</h2>
         <ul>
             {% for project in projects %}

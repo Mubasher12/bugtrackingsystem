@@ -3,17 +3,56 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile, Project, Assignment
+from .models import Developer, UserProfile, Project, Assignment, Bug
 from .forms import SignupForm, ProjectForm
 from django.http import HttpResponseForbidden
+from .forms import BugForm
 
 # from .forms import EditProjectQAForm 
 from django.forms import modelformset_factory
   # Create this form for handling developer assignments
 
+def developer_assigned_bugs(request):
+    # Assuming you have a 'Bug' model with a 'assigned_to' field that references the User
+    assigned_bugs = Bug.objects.filter(assigned_to=request.user)
+    return render(request, 'developer_assigned_bugs.html', {'bugs': assigned_bugs})
+def create_bug(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST.get('description', '')
+        deadline = request.POST.get('deadline', None)
+        screenshot = request.FILES.get('screenshot', None)
+        bug_type = request.POST['type']
+        status = request.POST['status']
+        assigned_to_id = request.POST['assigned_to']
+        project_id = request.POST['project']
 
+        # Create and save the bug
+        bug = Bug(
+            title=title,
+            description=description,
+            deadline=deadline,
+            screenshot=screenshot,
+            type=bug_type,
+            status=status,
+            assigned_to_id=assigned_to_id,
+            project_id=project_id
+            # Assume you want to link the QA who created it
+        )
+        bug.save()
+        return redirect('create_bug')  # Change to your success URL
 
+    developers = UserProfile.objects.filter(role='Developer')  # Query UserProfile for developers
+    projects = Project.objects.all()
+    return render(request, 'create_bug.html', {'developers': developers, 'projects': projects})
+ 
+ 
+def bug_list(request):
+    # Get all bugs from the database
+    bugs = Bug.objects.all()
+    return render(request, 'bug_list.html', {'bugs': bugs})
 def qa_edit_project(request, project_id):
+
     project = get_object_or_404(Project, id=project_id)
     
     # Get all developers currently assigned to the project
@@ -45,46 +84,6 @@ def qa_edit_project(request, project_id):
     }
     
     return render(request, 'qa_edit_project.html', context)
-
-# @login_required
-# def qa_edit_project(request, project_id):
-#     # Ensure the logged-in user is a QA
-#     if not request.user.userprofile.is_qa():
-#         return HttpResponseForbidden("You do not have permission to access this page.")
-    
-#     project = get_object_or_404(Project, id=project_id)
-    
-#     # Get all developers and check for assigned/unassigned ones
-#     developers = User.objects.filter(userprofile__role='Developer')
-#     assigned_developers_ids = Assignment.objects.filter(project=project).values_list('user_id', flat=True)
-#     assigned_developers = developers.filter(id__in=assigned_developers_ids)
-#     available_developers = developers.exclude(id__in=assigned_developers_ids)
-
-#     if request.method == 'POST':
-#         # Handle removing developers
-#         if 'remove_developer' in request.POST:
-#             developer_id = request.POST.get('remove_developer')
-#             if Assignment.objects.filter(project=project, user_id=developer_id).exists():
-#                 Assignment.objects.filter(project=project, user_id=developer_id).delete()
-        
-#         # Handle adding developers
-#         if 'add_developers' in request.POST:
-#             developer_ids = request.POST.getlist('add_developers')  # Get list of selected developers
-#             developers_to_add = User.objects.filter(id__in=developer_ids)
-#             assignments = [Assignment(project=project, user=developer) for developer in developers_to_add]
-#             Assignment.objects.bulk_create(assignments, ignore_conflicts=True)  # Prevent duplicates
-
-#         # Provide success message and redirect
-#         messages.success(request, 'Developers updated successfully!')
-#         return redirect(reverse('qa_edit_project', args=[project.id]))
-
-#     context = {
-#         'project': project,
-#         'assigned_developers': assigned_developers,
-#         'available_developers': available_developers,
-#     }
-
-#     return render(request, 'qa_edit_project.html', context)
 
 def signup_view(request):
     if request.method == 'POST':
@@ -179,13 +178,9 @@ def edit_project(request, pk):
         selected_users = project.assigned_to.values_list('id', flat=True) 
         return render(request, 'edit_project.html', {'form': form, 'users': users, 'selected_users': selected_users})
     else:
-        return redirect('unauthorized')  # Redirect if a non-manager tries to access the edit page
+        return redirect('You dont have permission to access this page')  # Redirect if a non-manager tries to access the edit page
 
-# @login_required
-# def qa_dashboard(request):
-#     user_profile = get_object_or_404(UserProfile, user=request.user)
-#     projects = Project.objects.filter(assigned_to=user_profile)
-#     return render(request, 'qa_landing.html', {'projects': projects})
+
 
 @login_required
 def qa_dashboard(request):
@@ -201,11 +196,7 @@ def qa_dashboard(request):
 
 
 
-# @login_required
-# def developer_landing(request):
-#     user_profile = get_object_or_404(UserProfile, user=request.user)
-#     projects = Project.objects.filter(assigned_to=user_profile)
-#     return render(request, 'developer_landing.html', {'projects': projects})
+
 
 @login_required
 def developer_landing(request):
@@ -214,7 +205,6 @@ def developer_landing(request):
         return HttpResponseForbidden("You do not have permission to access this page.")
     user_profile = get_object_or_404(UserProfile, user=request.user)
     projects = Project.objects.filter(assigned_to=user_profile)
-    # Fetch projects assigned to the logged-in user (as Developer)
     # projects = Project.objects.filter(assigned_to=request.user)  # Assuming Project is related to User
     return render(request, 'developer_landing.html', {'projects': projects})
 
