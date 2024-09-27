@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Update Bug Status</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update Status</button>
+    <a href="{% url 'developer_landing' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

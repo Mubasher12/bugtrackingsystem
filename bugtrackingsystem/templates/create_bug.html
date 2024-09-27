@@ -1,70 +1,91 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Bug</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Create New Bug</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter bug title" required>
+            </div>
 
-{% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Create New Bug</h2>
-    <form method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
-        {% csrf_token %}
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Describe the bug" rows="4"></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="title">Title *</label>
-            <input type="text" name="title" class="form-control" placeholder="Enter bug title" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea name="description" class="form-control" rows="3" placeholder="Enter detailed description"></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="deadline">Deadline</label>
-            <input type="date" name="deadline" class="form-control">
-        </div>
-        
-        <div class="form-group">
-            <label for="screenshot">Screenshot (PNG or GIF)</label>
-            <input type="file" name="screenshot" accept="image/png, image/gif" class="form-control">
-        </div>
-        
-        <div class="form-group">
-            <label for="type">Type *</label>
-            <select name="type" class="form-control" required>
-                <option value="">Select Bug Type</option>
-                <option value="feature">Feature</option>
-                <option value="bug">Bug</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="status">Status *</label>
-            <select name="status" class="form-control" required>
-                <option value="">Select Status</option>
-                <option value="new">New</option>
-                <option value="started">Started</option>
-                <option value="completed">Completed</option>
-                <option value="resolved">Resolved</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="project">Project *</label>
-            <select name="project" class="form-control" required>
-                <option value="">Select a Project</option>
-                {% for project in projects %}
-                    <option value="{{ project.id }}">{{ project.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="assigned_to multi-select">Assign to Developer *</label>
-            <select name="assigned_to" class="form-control" required>
-                <option value="">Select a Developer</option>
-                {% for profile in developers %}
-                    <option value="{{ profile.user.id }}">{{ profile.user.username }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Create Bug</button>
-    </form>
-</div>
-{% endblock %}
+            <div class="form-group">
+                <label for="deadline">Deadline:</label>
+                <input type="date" class="form-control" id="deadline" name="deadline">
+            </div>
+
+            <div class="form-group">
+                <label for="screenshot">Screenshot:</label>
+                <input type="file" class="form-control-file" id="screenshot" name="screenshot">
+            </div>
+
+            <div class="form-group">
+                <label for="type">Type:</label>
+                <select class="form-control" id="type" name="type">
+                    <option value="Bug">Bug</option>
+                    <option value="Feature">Feature</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_assigned_to">Assign Developers *</label>
+                <select id="id_assigned_to" name="assigned_to" class="form-control" multiple>
+                    {% for developer in developers %}
+                    <option value="{{ developer.id }}" {% if developer.id in selected_developers %}selected{% endif %}>
+                        {{ developer.user.username }}  <!-- Adjust this if necessary -->
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            
+            
+            <div class="form-group">
+                <label for="project">Project *</label>
+                <select name="project" class="form-control" required>
+                    <option value="">Select a Project</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.name }}</option>  <!-- Make sure to use the correct attribute -->
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <button type="submit" class="btn btn-primary">Create Bug</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_assigned_to').select2({
+                placeholder: "Select developers",
+                allowClear: true
+            });
+        });
+    </script>
+</body>
+</html>

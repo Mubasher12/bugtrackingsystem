@@ -1,3 +1,5 @@
+
+
 <h2>All Projects</h2>
 <table>
     <tr>
@@ -6,6 +8,7 @@
         <th>Start Date</th>
         <th>End Date</th>
         <th>Edit</th>
+        <!-- <th>View Bugs</th> -->
     </tr>
     {% for project in projects %}
     <tr>
@@ -14,6 +17,8 @@
         <td>{{ project.start_date }}</td>
         <td>{{ project.end_date }}</td>
         <td><a href="{% url 'edit_project' project.id %}">Edit</a></td>
+        <!-- <td><a href="{% url 'view_bugs' project.id %}">View Bugs</a></td>  -->
+
     </tr>
     {% endfor %}
-</table>
+</table> 

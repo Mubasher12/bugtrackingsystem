@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Bug</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Edit Bug</h2>
+        <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="Enter bug title" value="{{ form.title.value }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name="description" class="form-control" rows="3" placeholder="Enter detailed description">{{ form.description.value }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="deadline">Deadline</label>
+                <input type="date" name="deadline" class="form-control" value="{{ form.deadline.value }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="screenshot">Screenshot (PNG or GIF)</label>
+                <input type="file" name="screenshot" accept="image/png, image/gif" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="type">Type *</label>
+                <select name="type" class="form-control" required>
+                    <option value="feature" {% if form.type.value == "feature" %}selected{% endif %}>Feature</option>
+                    <option value="bug" {% if form.type.value == "bug" %}selected{% endif %}>Bug</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status *</label>
+                <select name="status" class="form-control" required>
+                    <option value="new" {% if form.status.value == "new" %}selected{% endif %}>New</option>
+                    <option value="started" {% if form.status.value == "started" %}selected{% endif %}>Started</option>
+                    <option value="completed" {% if form.status.value == "completed" %}selected{% endif %}>Completed</option>
+                    <option value="resolved" {% if form.status.value == "resolved" %}selected{% endif %}>Resolved</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="project">Project *</label>
+                <select name="project" class="form-control" required>
+                    <option value="">Select a Project</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}" {% if project.id == form.project.value %}selected{% endif %}>{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_assigned_to">Assign Users</label>
+                <select id="id_assigned_to" name="assigned_to" class="form-control" multiple>
+                    {% for user in developers %}
+                    <option value="{{ user.id }}" {% if user in assigned_developers %}selected{% endif %}>
+                        {{ user.user.username }} - {{ user.get_role_display }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            
+            
+
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+    <!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Include jQuery and Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_assigned_to').select2({
+            placeholder: "Select Developers",
+            allowClear: true
+        });
+
+        $('select[name="project"]').select2({
+            placeholder: "Select a Project",
+            allowClear: true
+        });
+    });
+</script>
+
+    
+</body>
+</html>
+

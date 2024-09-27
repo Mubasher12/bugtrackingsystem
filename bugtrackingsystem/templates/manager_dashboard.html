@@ -145,6 +145,10 @@
                         <a href="{% url 'delete_project' project.id %}" class="delete-button">
                             <i class="fas fa-trash-alt"></i> Delete
                         </a>
+                        <a href="{% url 'view_bugs' project.id %}" class="view-bugs-button">
+                            <i class="fas fa-bug"></i> View Bugs
+                        </a>
+                        
                     </li>
                 {% endfor %}
             </ul>

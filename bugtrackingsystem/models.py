@@ -80,7 +80,10 @@ class Bug(models.Model):
     screenshot = models.ImageField(upload_to='bugs/screenshots/', null=True, blank=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES_FEATURE)  # Default is for features, update in form
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='assigned_bugs')
+    assigned_to = models.ManyToManyField(UserProfile, related_name='assigned_bugs')  # Change to ManyToManyField
+    assigned_by = models.ForeignKey(UserProfile, related_name='created_bugs', on_delete=models.CASCADE)
+
+    # assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='assigned_bugs')
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name='bugs')
 
     def __str__(self):

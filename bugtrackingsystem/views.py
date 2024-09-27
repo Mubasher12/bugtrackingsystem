@@ -7,15 +7,74 @@ from .models import Developer, UserProfile, Project, Assignment, Bug
 from .forms import SignupForm, ProjectForm
 from django.http import HttpResponseForbidden
 from .forms import BugForm
+from .forms import BugEditForm
+from .forms import BugStatusForm
 
 # from .forms import EditProjectQAForm 
 from django.forms import modelformset_factory
-  # Create this form for handling developer assignments
+ 
+
+def view_bugs(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    bugs = Bug.objects.filter(project=project).select_related('assigned_by')  # Fetch assigned_by info
+    return render(request, 'view_bugs.html', {'project': project, 'bugs': bugs})
+
+@login_required
+def update_bug_status(request, bug_id):
+    # Fetch the bug object using the provided bug ID
+    bug = get_object_or_404(Bug, id=bug_id, assigned_to=request.user)
+
+    # Check if the form is submitted
+    if request.method == 'POST':
+        form = BugStatusForm(request.POST, instance=bug)
+        if form.is_valid():
+            form.save()
+            return redirect('developer_landing')  # Redirect to developer's dashboard or appropriate page
+    else:
+        form = BugStatusForm(instance=bug)
+
+    # Render the form in the template
+    return render(request, 'update_bug_status.html', {'form': form, 'bug': bug})
+# def edit_bug(request, id):
+#     bug = get_object_or_404(Bug, pk=id)
+#     if request.method == 'POST':
+#         form = BugEditForm(request.POST, instance=bug)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('bug_list')  # Redirect to the bugs list page or detail page after saving
+#     else:
+#         form = BugEditForm(instance=bug)
+#     return render(request, 'edit_bug.html', {'form': form,'projects': projects, 'developers': developers})
+def edit_bug(request, id):
+    bug = get_object_or_404(Bug, pk=id)
+    projects = Project.objects.all()  # Get all projects
+    developers = UserProfile.objects.filter(role='Developer')  # Ensure this fetches developers
+
+    if request.method == 'POST':
+        form = BugEditForm(request.POST, instance=bug)
+        if form.is_valid():
+            form.save()
+            return redirect('bug_list')  # Redirect after saving
+    else:
+        form = BugEditForm(instance=bug)
+
+    # Pass the developers, the bug, and the assigned developers to the template context
+    assigned_developers = bug.assigned_to.all()  # Get currently assigned developers
+    return render(request, 'edit_bug.html', {
+        'form': form,
+        'projects': projects,
+        'developers': developers,
+        'bug': bug,
+        'assigned_developers': assigned_developers  # Pass the assigned developers
+    })
+
 
 def developer_assigned_bugs(request):
-    # Assuming you have a 'Bug' model with a 'assigned_to' field that references the User
-    assigned_bugs = Bug.objects.filter(assigned_to=request.user)
-    return render(request, 'developer_assigned_bugs.html', {'bugs': assigned_bugs})
+    # Your logic to fetch and display bugs assigned to developers
+    return render(request, 'create_bug.html')
+
+
+@login_required
 def create_bug(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -24,7 +83,7 @@ def create_bug(request):
         screenshot = request.FILES.get('screenshot', None)
         bug_type = request.POST['type']
         status = request.POST['status']
-        assigned_to_id = request.POST['assigned_to']
+        assigned_to_ids = request.POST.getlist('assigned_to')  # Use getlist to retrieve multiple values
         project_id = request.POST['project']
 
         # Create and save the bug
@@ -35,16 +94,20 @@ def create_bug(request):
             screenshot=screenshot,
             type=bug_type,
             status=status,
-            assigned_to_id=assigned_to_id,
-            project_id=project_id
-            # Assume you want to link the QA who created it
+            project_id=project_id,
+            assigned_by=request.user.userprofile  # Set the assigned_by field to the logged-in user
         )
         bug.save()
-        return redirect('create_bug')  # Change to your success URL
+
+        # Set multiple developers to the bug
+        bug.assigned_to.set(assigned_to_ids)  # Ensure assigned_to is a ManyToMany field in your model
+
+        return redirect('create_bug')  
 
     developers = UserProfile.objects.filter(role='Developer')  # Query UserProfile for developers
     projects = Project.objects.all()
     return render(request, 'create_bug.html', {'developers': developers, 'projects': projects})
+
  
  
 def bug_list(request):

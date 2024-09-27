@@ -1,10 +1,31 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Project, UserProfile 
-from .models import Bug
+from .models import Bug, Developer
 
+class BugStatusForm(forms.ModelForm):
+    class Meta:
+        model = Bug
+        fields = ['status']
+
+class BugEditForm(forms.ModelForm):
+    # Adjust the queryset to match your User model's role field or relationship
+    assigned_developers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.filter(userprofile__role='Developer'),  # Assuming 'role' is in UserProfile
+        widget=forms.CheckboxSelectMultiple,  # Use 'forms.SelectMultiple' for a dropdown
+        required=False
+    )
+
+    class Meta:
+        model = Bug
+        fields = ['title', 'description', 'status', 'assigned_developers']
 
 class BugForm(forms.ModelForm):
+    assigned_to = forms.ModelMultipleChoiceField(
+        queryset=Developer.objects.all(), 
+        widget=forms.SelectMultiple,  # Multi-select widget
+        label='Assigned Developers'
+    )
     class Meta:
         model = Bug
         fields = ['title', 'description', 'deadline', 'screenshot', 'type', 'status', 'assigned_to']
@@ -13,7 +34,9 @@ class BugForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
             'screenshot': forms.FileInput(attrs={'multiple': False}),  # Allow only one file
             'deadline': forms.DateInput(attrs={'type': 'date'}),
+            'status': forms.Select(),  
         }
+
 
     def clean_screenshot(self):
         screenshot = self.cleaned_data.get('screenshot')

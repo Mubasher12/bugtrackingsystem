@@ -23,6 +23,10 @@ urlpatterns = [
     path('create_bug/', views.create_bug, name='create_bug'),
     path('bugs/', views.bug_list, name='bug_list'),
     path('developer/assigned-bugs/', views.developer_assigned_bugs, name='developer_assigned_bugs'),
+    path('bugs/edit/<int:id>/', views.edit_bug, name='edit_bug'),  # Add this line
+    path('developer/bugs/update/<int:bug_id>/', views.update_bug_status, name='update_bug_status'),
+    path('projects/<int:project_id>/bugs/', views.view_bugs, name='view_bugs'),
+
 
 
 
