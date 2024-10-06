@@ -35,37 +35,50 @@ def update_bug_status(request, bug_id):
 
     # Render the form in the template
     return render(request, 'update_bug_status.html', {'form': form, 'bug': bug})
+
 # def edit_bug(request, id):
 #     bug = get_object_or_404(Bug, pk=id)
+#     projects = Project.objects.all()  # Get all projects
+#     developers = UserProfile.objects.filter(role='Developer')  # Ensure this fetches developers
+
 #     if request.method == 'POST':
 #         form = BugEditForm(request.POST, instance=bug)
 #         if form.is_valid():
 #             form.save()
-#             return redirect('bug_list')  # Redirect to the bugs list page or detail page after saving
+#             return redirect('bug_list')  # Redirect after saving
 #     else:
 #         form = BugEditForm(instance=bug)
-#     return render(request, 'edit_bug.html', {'form': form,'projects': projects, 'developers': developers})
+
+#     # Pass the developers, the bug, and the assigned developers to the template context
+#     assigned_developers = bug.assigned_to.all()  # Get currently assigned developers
+#     return render(request, 'edit_bug.html', {
+#         'form': form,
+#         'projects': projects,
+#         'developers': developers,
+#         'bug': bug,
+#         'assigned_developers': assigned_developers  # Pass the assigned developers
+#     })/////
 def edit_bug(request, id):
     bug = get_object_or_404(Bug, pk=id)
-    projects = Project.objects.all()  # Get all projects
-    developers = UserProfile.objects.filter(role='Developer')  # Ensure this fetches developers
+    projects = Project.objects.all()
+    developers = UserProfile.objects.filter(role='Developer')  # Fetch all developers
 
     if request.method == 'POST':
         form = BugEditForm(request.POST, instance=bug)
         if form.is_valid():
             form.save()
-            return redirect('bug_list')  # Redirect after saving
+            return redirect('bug_list')
     else:
         form = BugEditForm(instance=bug)
 
-    # Pass the developers, the bug, and the assigned developers to the template context
-    assigned_developers = bug.assigned_to.all()  # Get currently assigned developers
+    # Get IDs of assigned developers
+    assigned_developers_ids = list(bug.assigned_to.values_list('id', flat=True))
+
     return render(request, 'edit_bug.html', {
         'form': form,
         'projects': projects,
         'developers': developers,
-        'bug': bug,
-        'assigned_developers': assigned_developers  # Pass the assigned developers
+        'assigned_developers_ids': assigned_developers_ids  # Pass list of assigned developers' IDs
     })
 
 

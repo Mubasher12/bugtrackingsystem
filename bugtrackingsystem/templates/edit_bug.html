@@ -61,7 +61,7 @@
                 </select>
             </div>
             
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="id_assigned_to">Assign Users</label>
                 <select id="id_assigned_to" name="assigned_to" class="form-control" multiple>
                     {% for user in developers %}
@@ -70,9 +70,19 @@
                     </option>
                     {% endfor %}
                 </select>
+            </div> -->
+            <div class="form-group">
+                <label for="id_assigned_to">Assign Users</label>
+                <select id="id_assigned_to" name="assigned_to" class="form-control" multiple>
+                    {% for user in developers %}
+                    <option value="{{ user.id }}" 
+                        {% if user.id in assigned_developers_ids %}selected{% endif %}>
+                        {{ user.user.username }} - {{ user.get_role_display }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-            
-            
+                      
             
 
             
